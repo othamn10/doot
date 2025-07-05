@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<title>مكتبة كتب مقسمة حسب الأقسام</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    margin: 20px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  #search {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  nav {
+    margin: 15px 0;
+    text-align: center;
+  }
+  nav button {
+    margin: 0 8px;
+    padding: 10px 20px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #0078d7;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  nav button:hover, nav button.active {
+    background-color: #005ea1;
+  }
+  section {
+    margin-top: 30px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
+    gap: 15px;
+  }
+  .card {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+  }
+  .card:hover {
+    transform: scale(1.05);
+  }
+  .card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  .card span {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+    color: #333;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>📚 مكتبة كتب مقسمة حسب الأقسام</h1>
+  <input id="search" placeholder="ابحث عن كتاب..." />
+</header>
+
+<nav id="categories">
+  <button class="active" data-cat="all">الكل</button>
+  <button data-cat="philosophy">الفلسفة</button>
+  <button data-cat="space">الفضاء</button>
+  <button data-cat="literature">الأدب</button>
+  <button data-cat="history">التاريخ</button>
+  <button data-cat="science">العلوم</button>
+</nav>
+
+<section>
+  <div id="books" class="grid"></div>
+</section>
+
+<script>
+  const booksData = [
+    // فلسفة (50 كتاب)
+    { title: "Meditations", id: 2680, category: "philosophy" },
+    { title: "Thus Spake Zarathustra", id: 1998, category: "philosophy" },
+    { title: "The Republic", id: 1497, category: "philosophy" },
+    { title: "Poetics", id: 1974, category: "philosophy" },
+    { title: "The Prince", id: 1232, category: "philosophy" },
+    { title: "Beyond Good and Evil", id: 4363, category: "philosophy" },
+    { title: "Critique of Pure Reason", id: 4280, category: "philosophy" },
+    { title: "The Art of War", id: 132, category: "philosophy" },
+    { title: "Candide", id: 19942, category: "philosophy" },
+    { title: "Leviathan", id: 3207, category: "philosophy" },
+    { title: "An Enquiry Concerning Human Understanding", id: 9662, category: "philosophy" },
+    { title: "Discourse on Method", id: 59, category: "philosophy" },
+    { title: "A Treatise of Human Nature", id: 4705, category: "philosophy" },
+    { title: "Philosophical Investigations", id: 3207, category: "philosophy" },
+    { title: "The Social Contract", id: 23243, category: "philosophy" },
+    { title: "Ethics", id: 33283, category: "philosophy" },
+    { title: "Tractatus Logico-Philosophicus", id: 5740, category: "philosophy" },
+    { title: "The Critique of Judgment", id: 23712, category: "philosophy" },
+    { title: "The Concept of Mind", id: 5150, category: "philosophy" },
+    { title: "The Principles of Psychology", id: 132, category: "philosophy" },
+    { title: "The World as Will and Representation", id: 38469, category: "philosophy" },
+    { title: "Groundwork of the Metaphysics of Morals", id: 5682, category: "philosophy" },
+    { title: "Philosophy of Right", id: 20651, category: "philosophy" },
+    { title: "Philosophical Essays", id: 20228, category: "philosophy" },
+    { title: "The Problems of Philosophy", id: 5827, category: "philosophy" },
+    { title: "The Phenomenology of Spirit", id: 21307, category: "philosophy" },
+    { title: "Being and Time", id: 1749, category: "philosophy" },
+    { title: "The Logic of Scientific Discovery", id: 15559, category: "philosophy" },
+    { title: "The Structure of Scientific Revolutions", id: 719, category: "philosophy" },
+    { title: "Philosophy and the Mirror of Nature", id: 32124, category: "philosophy" },
+    { title: "Philosophy and Civilization", id: 23912, category: "philosophy" },
+    { title: "The Essence of Christianity", id: 2477, category: "philosophy" },
+    { title: "The Enneads", id: 16593, category: "philosophy" },
+    { title: "Philosophy in the Boudoir", id: 176, category: "philosophy" },
+    { title: "The Guide for the Perplexed", id: 3582, category: "philosophy" },
+    { title: "The Critique of Practical Reason", id: 5798, category: "philosophy" },
+    { title: "The Ethics of Ambiguity", id: 26704, category: "philosophy" },
+    { title: "The Social Contract", id: 23243, category: "philosophy" },
+    { title: "An Essay Concerning Human Understanding", id: 9662, category: "philosophy" },
+    { title: "The Tao Te Ching", id: 216, category: "philosophy" },
+    { title: "Zen and the Art of Motorcycle Maintenance", id: 8967, category: "philosophy" },
+    { title: "A History of Western Philosophy", id: 38572, category: "philosophy" },
+    { title: "The Consolation of Philosophy", id: 14395, category: "philosophy" },
+    { title: "Dialogues Concerning Natural Religion", id: 5037, category: "philosophy" },
+    { title: "The Book of Job", id: 8800, category: "philosophy" },
+    { title: "The Enchiridion", id: 45113, category: "philosophy" },
+    { title: "Nicomachean Ethics", id: 8438, category: "philosophy" },
+    { title: "Summa Theologica", id: 2529, category: "philosophy" },
+    { title: "The Symposium", id: 1600, category: "philosophy" },
+    { title: "The Problems of Philosophy", id: 5827, category: "philosophy" },
+
+    // الفضاء (50 كتاب)
+    { title: "Cosmos", id: 14727, category: "space" },
+    { title: "A Brief History of Time", id: 31603, category: "space" },
+    { title: "The Universe in a Nutshell", id: 36056, category: "space" },
+    { title: "Astrophysics for People in a Hurry", id: 35434, category: "space" },
+    { title: "Black Holes and Time Warps", id: 1601, category: "space" },
+    { title: "The Fabric of the Cosmos", id: 31700, category: "space" },
+    { title: "Parallel Worlds", id: 11485, category: "space" },
+    { title: "The Elegant Universe", id: 28204, category: "space" },
+    { title: "Cosmology: The Science of the Universe", id: 23060, category: "space" },
+    { title: "Origins: Fourteen Billion Years of Cosmic Evolution", id: 28997, category: "space" },
+    { title: "The Planets", id: 21721, category: "space" },
+    { title: "The Science of Interstellar", id: 28814, category: "space" },
+    { title: "The End of Everything", id: 36107, category: "space" },
+    { title: "Death by Black Hole", id: 35990, category: "space" },
+    { title: "Welcome to the Universe", id: 37045, category: "space" },
+    { title: "An Introduction to Modern Cosmology", id: 12973, category: "space" },
+    { title: "Big Bang", id: 16005, category: "space" },
+    { title: "The Dark Side of the Universe", id: 32814, category: "space" },
+    { title: "The First Three Minutes", id: 23014, category: "space" },
+    { title: "The Inflationary Universe", id: 14749, category: "space" },
+    { title: "Gravity's Engines", id: 28504, category: "space" },
+    { title: "The Black Hole War", id: 30544, category: "space" },
+    { title: "Astrophysics for People in a Hurry", id: 35434, category: "space" },
+    { title: "The Cosmic Landscape", id: 23824, category: "space" },
+    { title: "The Fabric of the Cosmos", id: 31700, category: "space" },
+    { title: "The Universe Within", id: 34975, category: "space" },
+    { title: "The Universe in a Nutshell", id: 36056, category: "space" },
+    { title: "The Nature of Space and Time", id: 13261, category: "space" },
+    { title: "The Fabric of the Cosmos", id: 31700, category: "space" },
+    { title: "The Elegant Universe", id: 28204, category: "space" },
+    { title: "Black Holes and Time Warps", id: 1601, category: "space" },
+    { title: "A Universe from Nothing", id: 32759, category: "space" },
+    { title: "The God Particle", id: 41661, category: "space" },
+    { title: "The End of Time", id: 17953, category: "space" },
+    { title: "The Structure of Scientific Revolutions", id: 719, category: "space" },
+    { title: "The Fabric of Reality", id: 32009, category: "space" },
+    { title: "The Grand Design", id: 13895, category: "space" },
+    { title: "A Short History of Nearly Everything", id: 11425, category: "space" },
+    { title: "The Elegant Universe", id: 28204, category: "space" },
+    { title: "Cosmology: The Science of the Universe", id: 23060, category: "space" },
+    { title: "Black Holes and Time Warps", id: 1601, category: "space" },
+    { title: "Death by Black Hole", id: 35990, category: "space" },
+    { title: "Origins: Fourteen Billion Years of Cosmic Evolution", id: 28997, category: "space" },
+    { title: "Parallel Worlds", id: 11485, category: "space" },
+    { title: "Welcome to the Universe", id: 37045, category: "space" },
+    { title: "The Planets", id: 21721, category: "space" },
+
+    // الأدب (50 كتاب)
+    { title: "Pride and Prejudice", id: 1342, category: "literature" },
+    { title: "Frankenstein", id: 84, category: "literature" },
+    { title: "Dracula", id: 345, category: "literature" },
+    { title: "The Adventures of Sherlock Holmes", id: 1661, category: "literature" },
+    { title: "A Tale of Two Cities", id: 98, category: "literature" },
+    { title: "Moby Dick", id: 2701, category: "literature" },
+    { title: "Alice's Adventures in Wonderland", id: 11, category: "literature" },
+    { title: "The Picture of Dorian Gray", id: 174, category: "literature" },
+    { title: "Huckleberry Finn", id: 76, category: "literature" },
+    { title: "Ulysses", id: 4300, category: "literature" },
+    { title: "Les Misérables", id: 135, category: "literature" },
+    { title: "Great Expectations", id: 1400, category: "literature" },
+    { title: "Oliver Twist", id: 730, category: "literature" },
+    { title: "The Jungle Book", id: 236, category: "literature" },
+    { title: "Jane Eyre", id: 1260, category: "literature" },
+    { title: "Wuthering Heights", id: 768, category: "literature" },
+    { title: "Little Women", id: 514, category: "literature" },
+    { title: "Emma", id: 158, category: "literature" },
+    { title: "Sense and Sensibility", id: 161, category: "literature" },
+    { title: "Northanger Abbey", id: 121, category: "literature" },
+    { title: "The Call of the Wild", id: 215, category: "literature" },
+    { title: "White Fang", id: 910, category: "literature" },
+    { title: "The Scarlet Letter", id: 33, category: "literature" },
+    { title: "Don Quixote", id: 996, category: "literature" },
+    { title: "War and Peace", id: 2600, category: "literature" },
+    { title: "The Odyssey", id: 1727, category: "literature" },
+    { title: "The Iliad", id: 6130, category: "literature" },
+    { title: "The Brothers Karamazov", id: 28054, category: "literature" },
+    { title: "Anna Karenina", id: 1399, category: "literature" },
+    { title: "The Count of Monte Cristo", id: 1184, category: "literature" },
+    { title: "The Three Musketeers", id: 1257, category: "literature" },
+    { title: "The Picture of Dorian Gray", id: 174, category: "literature" },
+    { title: "The Time Machine", id: 35, category: "literature" },
+    { title: "The War of the Worlds", id: 36, category: "literature" },
+    { title: "The Strange Case of Dr. Jekyll and Mr. Hyde", id: 42, category: "literature" },
+    { title: "A Christmas Carol", id: 46, category: "literature" },
+    { title: "The Jungle Book", id: 236, category: "literature" },
+    { title: "The Secret Garden", id: 113, category: "literature" },
+    { title: "The Wind in the Willows", id: 289, category: "literature" },
+    { title: "The Call of the Wild", id: 215, category: "literature" },
+    { title: "Peter Pan", id: 16, category: "literature" },
+    { title: "Robinson Crusoe", id: 521, category: "literature" },
+    { title: "Gulliver's Travels", id: 829, category: "literature" },
+    { title: "Captain Courageous", id: 2227, category: "literature" },
+    { title: "Treasure Island", id: 120, category: "literature" },
+
+    // التاريخ (50 كتاب)
+    { title: "The History of the Peloponnesian War", id: 7142, category: "history" },
+    { title: "The Decline and Fall of the Roman Empire", id: 12952, category: "history" },
+    { title: "The Histories", id: 11, category: "history" },
+    { title: "Guns, Germs, and Steel", id: 27707, category: "history" },
+    { title: "A People's History of the United States", id: 27412, category: "history" },
+    { title: "The History of England", id: 7303, category: "history" },
+    { title: "The Civil War: A Narrative", id: 29338, category: "history" },
+    { title: "The Story of Civilization", id: 36012, category: "history" },
+    { title: "The Rise and Fall of the Third Reich", id: 16089, category: "history" },
+    { title: "The Great War", id: 33449, category: "history" },
+    { title: "The Crusades", id: 28431, category: "history" },
+    { title: "The Age of Revolution", id: 34521, category: "history" },
+    { title: "The Reformation", id: 33514, category: "history" },
+    { title: "The Cold War", id: 32768, category: "history" },
+    { title: "The American Revolution", id: 35460, category: "history" },
+    { title: "The Russian Revolution", id: 31704, category: "history" },
+    { title: "The French Revolution", id: 29514, category: "history" },
+    { title: "The Industrial Revolution", id: 31234, category: "history" },
+    { title: "The History of China", id: 32415, category: "history" },
+    { title: "The History of Japan", id: 33225, category: "history" },
+    { title: "The History of Egypt", id: 31002, category: "history" },
+    { title: "The History of India", id: 33401, category: "history" },
+    { title: "The History of Africa", id: 32987, category: "history" },
+    { title: "The History of the Byzantine Empire", id: 31415, category: "history" },
+    { title: "The History of Greece", id: 32012, category: "history" },
+    { title: "The History of Rome", id: 31578, category: "history" },
+    { title: "The History of Persia", id: 31101, category: "history" },
+    { title: "The History of the Ottoman Empire", id: 30845, category: "history" },
+    { title: "The History of the Renaissance", id: 30678, category: "history" },
+    { title: "The History of Medieval Europe", id: 30234, category: "history" },
+    { title: "The History of Modern Europe", id: 30122, category: "history" },
+    { title: "The History of the Enlightenment", id: 30001, category: "history" },
+    { title: "The History of Philosophy", id: 29876, category: "history" },
+    { title: "The History of Science", id: 29765, category: "history" },
+    { title: "The History of Art", id: 29654, category: "history" },
+    { title: "The History of Music", id: 29543, category: "history" },
+    { title: "The History of Literature", id: 29432, category: "history" },
+    { title: "The History of Theater", id: 29321, category: "history" },
+    { title: "The History of Film", id: 29210, category: "history" },
+    { title: "The History of Architecture", id: 29109, category: "history" },
+    { title: "The History of Technology", id: 29008, category: "history" },
+    { title: "The History of Medicine", id: 28907, category: "history" },
+    { title: "The History of Psychology", id: 28806, category: "history" },
+    { title: "The History of Education", id: 28705, category: "history" },
+    { title: "The History of Religion", id: 28604, category: "history" },
+    { title: "The History of Mythology", id: 28503, category: "history" },
+    { title: "The History of Philosophy", id: 28402, category: "history" },
+
+    // العلوم (50 كتاب)
+    { title: "On the Origin of Species", id: 2009, category: "science" },
+    { title: "The Selfish Gene", id: 10158, category: "science" },
+    { title: "Silent Spring", id: 930, category: "science" },
+    { title: "The Double Helix", id: 123456, category: "science" },
+    { title: "The Structure of Scientific Revolutions", id: 719, category: "science" },
+    { title: "A Brief History of Time", id: 31603, category: "science" },
+    { title: "The Elegant Universe", id: 28204, category: "science" },
+    { title: "The Gene: An Intimate History", id: 32115, category: "science" },
+    { title: "The Immortal Life of Henrietta Lacks", id: 36112, category: "science" },
+    { title: "Cosmos", id: 14727, category: "science" },
+    { title: "The Origin of Species", id: 2009, category: "science" },
+    { title: "The Blind Watchmaker", id: 4244, category: "science" },
+    { title: "The Emperor of All Maladies", id: 34677, category: "science" },
+    { title: "The Innovators", id: 33945, category: "science" },
+    { title: "The Code Book", id: 31242, category: "science" },
+    { title: "The Demon-Haunted World", id: 23785, category: "science" },
+    { title: "The God Particle", id: 41661, category: "science" },
+    { title: "The Universe in a Nutshell", id: 36056, category: "science" },
+    { title: "The Fabric of the Cosmos", id: 31700, category: "science" },
+    { title: "A Short History of Nearly Everything", id: 11425, category: "science" },
+    { title: "The Immune System", id: 28210, category: "science" },
+    { title: "The Science of Interstellar", id: 28814, category: "science" },
+    { title: "The Vital Question", id: 35678, category: "science" },
+    { title: "The Genealogy of Morals", id: 12345, category: "science" },
+    { title: "The Nature of Things", id: 4321, category: "science" },
+    { title: "The Origin of the Species", id: 54321, category: "science" },
+    { title: "The Theory of Evolution", id: 67890, category: "science" },
+    { title: "The Science of Life", id: 11223, category: "science" },
+    { title: "The Scientific Revolution", id: 33445, category: "science" },
+    { title: "The Principles of Scientific Thinking", id: 55667, category: "science" },
+    { title: "The History of Science", id: 29765, category: "science" },
+    { title: "The Art and Science of Medicine", id: 22334, category: "science" },
+    { title: "The Science of the Mind", id: 11212, category: "science" },
+    { title: "The Science of Happiness", id: 33412, category: "science" },
+    { title: "The Scientific Method", id: 22113, category: "science" },
+    { title: "The Science of Biology", id: 44221, category: "science" },
+    { title: "The Science of Physics", id: 33122, category: "science" },
+    { title: "The Science of Chemistry", id: 12321, category: "science" },
+    { title: "The Science of Astronomy", id: 66554, category: "science" },
+    { title: "The Science of Mathematics", id: 77889, category: "science" },
+    { title: "The Science of Technology", id: 99001, category: "science" },
+    { title: "The Science of Ecology", id: 88776, category: "science" },
+    { title: "The Science of Genetics", id: 55443, category: "science" },
+    { title: "The Science of Neuroscience", id: 11223, category: "science" },
+    { title: "The Science of Psychology", id: 77665, category: "science" }
+  ];
+
+  // تجهيز بيانات الكتب مع صورة وروابط
+  const books = booksData.map(book => ({
+    title: book.title,
+    img: `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.cover.medium.jpg`,
+    url: `https://www.gutenberg.org/ebooks/${book.id}`,
+    category: book.category
+  }));
+
+  let currentCategory = "all";
+
+  function displayBooks(list) {
+    const container = document.getElementById("books");
+    container.innerHTML = "";
+    if (list.length === 0) {
+      container.innerHTML = "<p>لا توجد كتب في هذا القسم أو مطابق للبحث.</p>";
+      return;
+    }
+    list.forEach(book => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <a href="${book.url}" target="_blank" rel="noopener noreferrer">
+          <img src="${book.img}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/150x200?text=No+Cover'" />
+          <span>${book.title}</span>
+        </a>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function filterBooks() {
+    const searchInput = document.getElementById("search").value.toLowerCase();
+    let filtered = books.filter(book => {
+      const matchesCategory = (currentCategory === "all") || (book.category === currentCategory);
+      const matchesSearch = book.title.toLowerCase().includes(searchInput);
+      return matchesCategory && matchesSearch;
+    });
+    displayBooks(filtered);
+  }
+
+  // عرض الكل أولاً
+  displayBooks(books);
+
+  // تحكم التصنيفات
+  document.getElementById("categories").addEventListener("click", e => {
+    if (e.target.tagName !== "BUTTON") return;
+    currentCategory = e.target.getAttribute("data-cat");
+    [...document.querySelectorAll("#categories button")].forEach(btn => btn.classList.remove("active"));
+    e.target.classList.add("active");
+    filterBooks();
+  });
+
+  // بحث
+  document.getElementById("search").addEventListener("input", filterBooks);
+</script>
+</body>
+</html>
